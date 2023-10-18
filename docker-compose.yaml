@@ -1,0 +1,17 @@
+version: '3'
+services:
+  mongo-rs-1:
+    image: mongo
+    command: mongod --port 40001 --replSet rs0
+    network_mode: host
+
+  mongo-rs-2:
+    image: mongo
+    command: mongod --port 40002 --replSet rs0
+    network_mode: host
+
+  mongo-rs-3:
+    image: mongo
+    command: mongod --port 40003 --replSet rs0
+    network_mode: host
+  
