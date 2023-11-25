@@ -2,8 +2,6 @@ const { ObjectId } = require("mongodb");
 const { start } = require('./clients');
 
 upsert()
-// groupFunction()
-// groupAccumulate()
 
 async function upsert() {
   const { movies } = await start();
@@ -14,10 +12,10 @@ async function upsert() {
 
   const updateDocument = {
       $set: {
-        name: 'John'
+        name: 'New name John'
       },
       $setOnInsert: {
-        age: 45
+        age: 100500
       },
   };
 

@@ -5,9 +5,17 @@ const { start } = require('./clients');
 // groupFunction()
 // groupAccumulate()
 
+// Необходимо:
+// - построить шардированный кластер из 3 кластерных нод( по 3 инстанса с репликацией) и с кластером конфига(3 инстанса);
+// - добавить балансировку, нагрузить данными, выбрать хороший ключ шардирования, посмотреть как данные перебалансируются между шардами;
+// - поронять разные инстансы, посмотреть, что будет происходить, поднять обратно. Описать что произошло.
+
+// * настроить аутентификацию и многоролевой доступ;
+
 async function mapReduce() {
   const { movies } = await start();
 
+  // Выполняются все на движке
   const mapFunction = function () {
     emit(this.year, 1);
   };
@@ -25,34 +33,33 @@ async function mapReduce() {
   );
 }
 
-async function groupFunction() {
-    const { movies } = await start();
+// async function groupFunction() {
+//     const { movies } = await start();
 
-    const fn = function(imdb, tomatoes) {
-      return ((imdb?.rating || 0) + (tomatoes?.viewer?.rating || 0) / 2)
-   };
+//     const fn = function(imdb, tomatoes) {
+//       return ((imdb?.rating || 0) + (tomatoes?.viewer?.rating || 0) / 2)
+//     };
   
-    // https://www.mongodb.com/docs/manual/reference/operator/aggregation/group/
-    const res = await movies.collection('movies').aggregate([
-        {
-          $addFields: {
-            avgRating: { 
-              $function: {
-                  // body: fn.toString(),
-                  // body: `function(imdb, tomatoes) {
-                  //    return ((imdb?.rating || 0) + (tomatoes?.viewer?.rating || 0) / 2)
-                  // }`,
-                  args: [ "$imdb", '$tomatoes' ],
-                  lang: "js"
-               }
-            },
-          }
-        }
-    ]).toArray()
+//     // https://www.mongodb.com/docs/manual/reference/operator/aggregation/group/
+//     const res = await movies.collection('movies').aggregate([
+//         {
+//           $addFields: {
+//             avgRating: { 
+//               $function: {
+//                   body: fn.toString(),
+//                   // body: `function(imdb, tomatoes) {
+//                   //   return ((imdb?.rating || 0) + (tomatoes?.viewer?.rating || 0) / 2)
+//                   // }`,
+//                   args: [ "$imdb", '$tomatoes' ],
+//                   lang: "js"
+//                }
+//             },
+//           }
+//         }
+//     ]).toArray()
   
-    console.log(res[0]);
-}
-  
+//     console.log(res[0]);
+// }
 
 async function groupAccumulate() {
   const { movies } = await start();

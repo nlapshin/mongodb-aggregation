@@ -2,9 +2,11 @@ const { start } = require('./clients-replication');
 
 async function run() {
   const { client } = await start();
+  // Сессию
   const session = client.startSession();
 
   try {
+    // стартуем транзацию
     session.startTransaction();
 
     const db = client.db('mydb');
@@ -15,10 +17,9 @@ async function run() {
     const updateData = { $set: { age: 26 } };
 
     await collection.insertOne(insertDocument, { session });
-
     await collection.updateOne(updateQuery, updateData, { session });
 
-    await delay();
+    // await delay();
 
     await session.commitTransaction();
 
