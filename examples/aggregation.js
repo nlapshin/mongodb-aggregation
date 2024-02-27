@@ -1,81 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { start } = require('./clients');
 
-// const arr = [
-//   {
-//     year: '1920',
-//     countries: ['USA', 'Russia', 'France']
-//   }
-// ]; // unwind;
-
-// const unwindArr = [
-//   {
-//     year: '1920',
-//     countries: 'USA'
-//   },
-//   {
-//     year: '1920',
-//     countries: 'Russia'
-//   },
-//   {
-//     year: '1920',
-//     countries: 'France'
-//   },
-// ]
-
-// {
-//   "_id" : ObjectId("573a1390f29313caabcd4eaf"),
-//   "plot" : "A woman, with the aid of her police officer sweetheart, endeavors to uncover the prostitution ring that has kidnapped her sister, and the philanthropist who secretly runs it.",
-//   "genres" : [ 
-//       "Crime", 
-//       "Drama"
-//   ],
-//   "runtime" : 88,
-//   "cast" : [ 
-//       "Jane Gail", 
-//       "Ethel Grandin", 
-//       "William H. Turner", 
-//       "Matt Moore"
-//   ],
-//   "num_mflix_comments" : 2,
-//   "poster" : "https://m.media-amazon.com/images/M/MV5BYzk0YWQzMGYtYTM5MC00NjM2LWE5YzYtMjgyNDVhZDg1N2YzXkEyXkFqcGdeQXVyMzE0MjY5ODA@._V1_SY1000_SX677_AL_.jpg",
-//   "title" : "Traffic in Souls",
-//   "lastupdated" : "2015-09-15 02:07:14.247000000",
-//   "languages" : [ 
-//       "English"
-//   ],
-//   "released" : ISODate("1913-11-24T00:00:00.000Z"),
-//   "directors" : [ 
-//       "George Loane Tucker"
-//   ],
-//   "rated" : "TV-PG",
-//   "awards" : {
-//       "wins" : 1,
-//       "nominations" : 0,
-//       "text" : "1 win."
-//   },
-//   "year" : "2000",
-//   "imdb" : {
-//       "rating" : 6,
-//       "votes" : 371,
-//       "id" : 3471
-//   },
-//   "countries" : [ 
-//       "USA"
-//   ],
-//   "type" : "movie",
-//   "tomatoes" : {
-//       "viewer" : {
-//           "rating" : 3,
-//           "numReviews" : 85,
-//           "meter" : 57
-//       },
-//       "dvd" : ISODate("2008-08-26T00:00:00.000Z"),
-//       "lastUpdated" : ISODate("2015-08-10T18:33:55.000Z")
-//   }
-// }
-
-
 // Db.collection('my-collection').aggregate([
 //   {
 //     $match: {
@@ -92,56 +17,228 @@ const { start } = require('./clients');
 
 // $match, $project
 
+// find().skip().limit()
+// JOIN - как объеденить две коллекции?
+// GROUP BY - find + aggregate + find(WHERE + GROUP BY + HAVING)
+
+// Aggregation pipeline.
+// 1.
+// find() - это императивный подход.
+// SELECT * FROM table - это императивный подход.
+// 2. Концепция pipeline
+
+
+
+// $match - аналог find в aggregation pipeline
+// $project - проекция данных
+
+// collection('users').aggregate([
+//   {
+//     $match: {
+//       age: { $gte: 18 }
+//     }, // stage 1 - мы фильтруем по условию
+//     $project: {
+//       name: 1,
+//       age: 1
+//     }, // stage 2 - мы проектируем
+//   }
+// ])
+
+// collection('users').find({
+//   year: { $gte: 18 }
+// }, { 
+//   name: 1, age: 1 
+// });
+
 // groupMoviesByYears();
 // groupUnwindMovies();
 
-// lookupUserComments()
-// lookupMoviesComments();
+// lookupUserComments();
+lookupMoviesComments();
 // lookupMoviesFilterComments();
 
 // outMovies();
 
-// Группирование - разобрали
-// JOIN - lookup
-// Транзации - они появились в версия 4.2+
+// $gte
+// unwind - что значит?
 
 async function groupMoviesByYears() {
   const { movies } = await start();
+  // movies - client.db('sample_mflix')
 
   // https://www.mongodb.com/docs/manual/reference/operator/aggregation/group/
+
+  // {
+  //   _id: 2011, // это год
+  //   total: 1040,
+  //   movies: [
+  //     'The Rum Diary',
+  //     'Gnomeo & Juliet',
+  //     'The Crimson Petal and the White',
+  //     'Cowboys & Aliens',
+  //     'Real Steel',
+  //     'Puss in Boots',
+  //     'Captain America: The First Avenger',
+  //     'Generation P',
+  //     'Margaret',
+  //     'Tower Heist',
+  //     'The Smurfs',
+  //     'The Mechanic',
+  //     'Extremely Loud & Incredibly Close',
+  //     'The Tree of Life',
+  //     'Season of the Witch',
+  //     'Atlas Shrugged: Part I',
+  //     'Something Borrowed',
+  //     'Samsara',
+  //     'Drive',
+  //     'Thor',
+  //     'Red Dog',
+  //     'Take Me Home Tonight',
+  //     'Jack and Jill',
+  //     'Conan the Barbarian',
+  //     'Priest',
+  //     'Hoodwinked Too! Hood vs. Evil',
+  //     '6 Month Rule',
+  //     'Red State',
+  //     'Sanctum',
+  //     'From Prada to Nada',
+  //     'The Thing',
+  //     'Black Butterflies',
+  //     'Source Code',
+  //     'A Monster in Paris',
+  //     'Hugo',
+  //     'The Adventures of Tintin',
+  //     'Funkytown',
+  //     'Sucker Punch',
+  //     'The Green Hornet',
+  //     'Hanna',
+  //     'Straw Dogs',
+  //     'The Iron Lady',
+  //     'Asylum Blackout',
+  //     'Inseparable',
+  //     'The Descendants',
+  //     'The Eagle',
+  //     'Water for Elephants',
+  //     'Monte Carlo',
+  //     'Footloose',
+  //     'Midnight Son',
+  //     'Ghost Rider: Spirit of Vengeance',
+  //     'A Princess for Christmas',
+  //     'Megan Is Missing',
+  //     'Paul',
+  //     'The Darkest Hour',
+  //     'George Harrison: Living in the Material World',
+  //     'The Ides of March',
+  //     'Here',
+  //     'Green Lantern',
+  //     'Sonny Boy',
+  //     'Beastly',
+  //     'The Rite',
+  //     'Wuthering Heights',
+  //     "Corman's World: Exploits of a Hollywood Rebel",
+  //     'The Skin I Live In',
+  //     'The Lincoln Lawyer',
+  //     'Rango',
+  //     'About Sunny',
+  //     'Harry Potter and the Deathly Hallows: Part 2',
+  //     'The Muppets',
+  //     'Tyrannosaur',
+  //     'Moneyball',
+  //     'Bag of Bones',
+  //     'Seeking Justice',
+  //     'Seeking Justice',
+  //     'Cars 2',
+  //     'Battle Los Angeles',
+  //     'Limitless',
+  //     'Zookeeper',
+  //     'African Cats',
+  //     'Jane Eyre',
+  //     'Mission: Impossible - Ghost Protocol',
+  //     'Pariah',
+  //     'Captain Thunder',
+  //     'The Future',
+  //     'Your Highness',
+  //     'Father, Son & Holy Cow',
+  //     'We Need to Talk About Kevin',
+  //     'Sidewalls',
+  //     'Bellflower',
+  //     'Rebellion',
+  //     'Judas Kiss',
+  //     'Immortals',
+  //     'Take Me Home',
+  //     'Pig',
+  //     'Scream 4',
+  //     'The Roommate',
+  //     'A Very Harold & Kumar 3D Christmas',
+  //     "The Devil's Double",
+  //     'Deadheads'
+  //   ],
+  //   avgImdbRating: 6.491538461538461,
+  //   minImdbRating: 1.6,
+  //   maxImdbRating: 9.2
+  // }
+
   const res = await movies.collection('movies').aggregate([
     {
       $match: {
         year: { $gte: 2000 }
       }
-    },
+    }, // Фильтрация данных, аналог WHERE
     {
       $group: {
+        // При группировании два вида: колонки группирования, колонки аггрегации.
+
         _id: '$year', // Поля уникальный, по которым делается группирования
 
         // aggregation fields
         total: { $sum: 1 }, // Добавлять +1
 
         // Все фильмы в виде массива строк.
-        movies: { $push: '$title'}, // Добавить в массив значение
+        // movies: { $push: '$title'}, // Добавить в массив значение
 
         // Average
         avgImdbRating: { $avg: '$imdb.rating' },
         minImdbRating: { $min: '$imdb.rating' },
         maxImdbRating: { $max: '$imdb.rating' }
       }
-    },
+    }, // GROUP BY + SELECT
     {
       $match: {
-        avgImdbRating: { $gte: 8 }
+        avgImdbRating: { $gte: 6.6 }
       }
-    },
+    }, // Что-то в виде HAVING. Добавил ещё одну фильтрацию
     {
       $sort: {
-        _id: -1
+        _id: 1
       }
-    }
+    } // ORDER BY
   ]).toArray();
+
+// {
+//   $match: {
+//     year: { $gte: 2000 }
+//   }
+// }, // WHERE $match - отфильтрую по годам
+// {
+//   $group: {
+//     // При группировании два вида: колонки группирования, колонки аггрегации.
+
+//     _id: '$year', // Поля уникальный, по которым делается группирования
+
+//     // aggregation fields
+//     total: { $sum: 1 }, // Добавлять +1
+
+//     // Все фильмы в виде массива строк.
+//     // movies: { $push: '$title'}, // Добавить в массив значение
+
+//     // Average
+//     avgImdbRating: { $avg: '$imdb.rating' },
+//     minImdbRating: { $min: '$imdb.rating' },
+//     maxImdbRating: { $max: '$imdb.rating' }
+//   }
+// }, // GROUP BY
+
+
 
   console.log(res);
 }
@@ -155,8 +252,11 @@ async function groupUnwindMovies() {
       $unwind: '$countries'
     },
     {
+      $unwind: '$genres'
+    },
+    {
       $group: {
-        _id: '$countries', // массив строк
+        _id: { $concat: ['$countries', '___', '$genres'] }, // массив строк
         total: { $sum: 1 },
       }
     },
@@ -173,6 +273,17 @@ async function groupUnwindMovies() {
 async function lookupUserComments() {
   const { movies } = await start();
 
+  // users - коллеция и хотим добавить comments
+//   {
+//     "_id" : ObjectId("59b99db7cfa9a34dcd7885bd"),
+//     "name" : "Petyr Baelish",
+//     "email" : "aidan_gillen@gameofthron.es",
+//     "userComments": [
+//       {
+
+//       }
+//     ]
+// }
   const res = await movies.collection('users').aggregate([
     {
       $lookup: {
@@ -192,7 +303,7 @@ async function lookupUserComments() {
     }
   ]).toArray();
 
-  console.log(res[0]);
+  console.dir(res, { depth: 4 });
 }
 
 async function lookupMoviesComments() {
@@ -200,11 +311,23 @@ async function lookupMoviesComments() {
 
   const res = await movies.collection('movies').aggregate([
     {
+      $match: {
+        _id: new ObjectId('573a1396f29313caabce4a9a')
+      }
+    },
+    {
       $lookup: {
-        from: 'comments',
-        localField: '_id',
-        foreignField: 'movie_id',
-        as: 'comments'
+        from: 'comments', // Указываем коллекцию для объединения
+        localField: '_id', // Указываем ключ в коллекции movies для объединения
+        foreignField: 'movie_id', // Указываем ключ в коллекции comments JOIN comments cs ON movies.id = cs.movie_id
+        as: 'comments' // как будем называть новое поле
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        comments: 1
       }
     },
     {
@@ -214,6 +337,11 @@ async function lookupMoviesComments() {
 
   console.log(res[0]);
 }
+
+// update - deprecated
+// updateOne, updateMany - 
+// delete - 
+// deleteOne, deleteMany
 
 async function lookupMoviesFilterComments() {
   const { movies } = await start();
@@ -234,11 +362,22 @@ async function lookupMoviesFilterComments() {
                 $match: { 
                   $expr: { $eq: [ "$movie_id",  "$$movieId" ] }
                 }
+              },
+              {
+                $project: {
+                  movie_id: 0
+                }
+              },
+              {
+                $limit: 1
               }
            ],
            as: "comments"
       }
     },
+    // {
+    //   $unwind: '$comments'
+    // },
     {
       $limit: 1
     }
@@ -265,9 +404,19 @@ async function outMovies() {
       }
     },
     {
-      $out: 'groupMovies'
+      $out: 'movies_group_by_year'
     }
   ]).toArray();
 
   console.log(res);
 }
+
+
+// Что будет ближе по духу: написать приложение или создавть инженерное решение как DBA.
+
+// 1. CRUD API Server с бизнес задачей
+// 2. DBA - создал кластер(репликация + шардирования), завернуть это или в k8s или в cloud.
+// И проводите исследовательскую работу. Показать как кластер работает при падении сети/серверов.
+// А как ведёт под нагрузкой.
+// Собрали реплика сэт с версией mongodb 4.2 и как обновиться до версии 7.
+// 3. Что-то своё придумать.
