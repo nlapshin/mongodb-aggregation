@@ -1,5 +1,17 @@
 const { start } = require('./clients-replication');
 
+db.collection.find({
+  location: {
+    $near: {
+      $geometry: {
+        type: "Point",
+        coordinates: [-73.8601152, 40.7311739]
+      },
+      $maxDistance: 1000
+    }
+  }
+});
+
 async function run() {
   const { client } = await start();
   // Сессию
