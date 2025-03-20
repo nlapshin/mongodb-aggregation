@@ -1,16 +1,16 @@
 const { start } = require('./clients-replication');
 
-db.collection.find({
-  location: {
-    $near: {
-      $geometry: {
-        type: "Point",
-        coordinates: [-73.8601152, 40.7311739]
-      },
-      $maxDistance: 1000
-    }
-  }
-});
+// db.collection.find({
+//   location: {
+//     $near: {
+//       $geometry: {
+//         type: "Point",
+//         coordinates: [-73.8601152, 40.7311739]
+//       },
+//       $maxDistance: 1000
+//     }
+//   }
+// });
 
 async function run() {
   const { client } = await start();
@@ -22,16 +22,21 @@ async function run() {
     session.startTransaction();
 
     const db = client.db('mydb');
-    const collection = db.collection('mycollection');
+    const collection1 = db.collection('mycollection-1');
+    const collection2 = db.collection('mycollection-2');
 
     const insertDocument = { name: 'Alice', age: 25 };
-    const updateQuery = { name: 'Alice' };
-    const updateData = { $set: { age: 26 } };
+    // const updateQuery = { name: 'Alice' };
+    // const updateData = { $set: { age: 26 } };
 
-    await collection.insertOne(insertDocument, { session });
-    await collection.updateOne(updateQuery, updateData, { session });
+    await collection1.insertOne(insertDocument, { session });
+    await collection2.insertOne(insertDocument, { session });
+    // await collection.updateOne(updateQuery, updateData, { session });
 
     // await delay();
+
+    // throw new Error('test');
+    
 
     await session.commitTransaction();
 
